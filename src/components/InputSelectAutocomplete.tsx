@@ -7,6 +7,7 @@ import { TInputSelectAutocompleteProps } from "@/types/Input";
 import { useReactHookForm } from "@/hooks/useReactHookForm";
 import { useInputErrorMessages } from "@/hooks/useInputErrorMessages";
 import { useParentController } from "@/hooks/useParentController";
+import { ErrorMessages } from "./ErrorMessages";
 
 export function InputSelectAutocomplete({
   reactHookForm: { name, control } = {},
@@ -159,23 +160,10 @@ export function InputSelectAutocomplete({
         )}
       </div>
 
-      {errorMessageArray && (
-        <div className="flex flex-col pt-0.5">
-          {errorMessageArray.map((errorMessage, idx) => {
-            return (
-              <span
-                key={idx}
-                className={twMerge(
-                  "block text-xs font-medium text-red-500 leading-none",
-                  className?.label
-                )}
-              >
-                *{errorMessage}
-              </span>
-            );
-          })}
-        </div>
-      )}
+      <ErrorMessages
+        errorMessageArray={errorMessageArray}
+        className={className?.errors || {}}
+      />
     </div>
   );
 }

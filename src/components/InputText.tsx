@@ -15,6 +15,7 @@ import { useReactHookForm } from "@/hooks/useReactHookForm";
 import { TInputTextProps } from "@/types/Input";
 import { useEffect, useRef } from "react";
 import { twMerge } from "tailwind-merge";
+import { ErrorMessages } from "./ErrorMessages";
 
 export function InputText({
   reactHookForm: { name, control } = {},
@@ -150,25 +151,10 @@ export function InputText({
         maxLength={maxLenght}
       />
 
-      {errorMessageArray && (
-        <div
-          className={twMerge(
-            "flex flex-col pt-0.5 text-red-500 font-medium text-xs",
-            className?.errors?.container
-          )}
-        >
-          {errorMessageArray.map((errorMessage, idx) => {
-            return (
-              <span
-                key={idx}
-                className={twMerge("leading-none", className?.errors?.span)}
-              >
-                *{errorMessage}
-              </span>
-            );
-          })}
-        </div>
-      )}
+      <ErrorMessages
+        errorMessageArray={errorMessageArray}
+        className={className?.errors || {}}
+      />
     </div>
   );
 }

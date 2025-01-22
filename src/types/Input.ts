@@ -42,7 +42,12 @@ export type TInputTextProps = TCommonProps & {
 export type TInputSelectAutocompleteProps = {
   reactHookForm?: { name?: string; control?: Control<any, any> };
   label?: string;
-  className?: { label?: string; select?: string; container?: string };
+  className?: {
+    label?: string;
+    select?: string;
+    container?: string;
+    errors?: { container?: string; span?: string };
+  };
   defaultValue?: string;
   placeholder?: string;
   items: { value: string; label: string }[];
@@ -65,6 +70,22 @@ export type TInputImageProps = {
 };
 
 export type TInputDateProps = TCommonProps & {
-  className?: { container?: string; input?: string; label?: string };
+  className?: {
+    container?: string;
+    input?: string;
+    label?: string;
+    errors?: { container?: string; span?: string };
+  };
   onChange?: (value: string) => void;
+};
+
+export type TInputSelectProps = TCommonProps & {
+  className?: {
+    label?: string;
+    select?: string;
+    container?: string;
+    errors?: { container?: string; span?: string };
+  };
+  items: { value: string; label: string }[];
+  onChange?: (value: string, label: string) => void;
 };
