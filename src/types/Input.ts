@@ -18,7 +18,7 @@ export type TInputTextProps = TCommonProps & {
     errors?: { container?: string; span?: string };
   };
   onChange?: (parsedValue: string, formattedValue: string) => void;
-  parse?: "only-numbers";
+  parse?: "only-numbers" | "positive-negative-numbers";
   parser?: (formattedValue: string) => string;
   format?:
     | "currency-brl"

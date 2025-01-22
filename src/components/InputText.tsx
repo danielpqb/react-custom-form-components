@@ -53,51 +53,65 @@ export function InputText({
       formattedValue = formattedValue.replaceAll(/\n/g, "");
     }
 
+    // Filtra o texto exibido para cada tipo de parse
+    switch (parse) {
+      case "only-numbers":
+        formattedValue = formattedValue.replaceAll(/\D/g, "");
+        break;
+      case "positive-negative-numbers":
+        const countDashes = (formattedValue.match(/-/g) || []).length;
+        const isNegative = countDashes % 2 === 1;
+        formattedValue = formattedValue.replaceAll(/\D/g, "");
+        formattedValue = isNegative ? `-${formattedValue}` : formattedValue;
+        break;
+    }
+
     // Filtra o texto exibido através de uma função customizada
     if (parser) {
       formattedValue = parser(formattedValue);
     }
 
-    // Filtra o texto exibido para cada tipo de parse
-    switch (parse) {
-      case "only-numbers":
-        return formattedValue.replaceAll(/\D/g, "");
-
-      default:
-        return formattedValue;
-    }
+    return formattedValue;
   }
 
   // Formata o texto que é exibido para o usuário
   function formatText(parsedValue: string) {
+    // Formata o texto exibido para cada tipo de formatação
+    switch (format) {
+      case "currency-brl":
+        parsedValue = currencyFormatter(parsedValue);
+        break;
+      case "currency-usd":
+        parsedValue = currencyFormatter(parsedValue, {
+          currency: "USD",
+        });
+        break;
+      case "cpf":
+        parsedValue = cpfFormatter(parsedValue);
+        break;
+      case "cnpj":
+        parsedValue = cnpjFormatter(parsedValue);
+        break;
+      case "phone":
+        parsedValue = phoneFormatter(parsedValue);
+        break;
+      case "cep":
+        parsedValue = cepFormatter(parsedValue);
+        break;
+      case "rbna-certificate-number":
+        parsedValue = rbnaCertificateNumberFormatter(parsedValue);
+        break;
+      case "danfe-accesskey":
+        parsedValue = danfeAccessKeyFormatter(parsedValue);
+        break;
+    }
+
     // Formata o texto exibido através de uma função customizada
     if (formatter) {
       parsedValue = formatter(parsedValue);
     }
 
-    // Formata o texto exibido para cada tipo de formatação
-    switch (format) {
-      case "currency-brl":
-        return currencyFormatter(parsedValue);
-      case "currency-usd":
-        return currencyFormatter(parsedValue, {
-          currency: "USD",
-        });
-      case "cpf":
-        return cpfFormatter(parsedValue);
-      case "cnpj":
-        return cnpjFormatter(parsedValue);
-      case "phone":
-        return phoneFormatter(parsedValue);
-      case "cep":
-        return cepFormatter(parsedValue);
-      case "rbna-certificate-number":
-        return rbnaCertificateNumberFormatter(parsedValue);
-      case "danfe-accesskey":
-        return danfeAccessKeyFormatter(parsedValue);
-      default:
-        return parsedValue;
-    }
+    return parsedValue;
   }
 
   // Função que atualiza o valor recebido no formulário, atualiza o valor exibido ao usuário,
