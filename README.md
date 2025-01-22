@@ -1,11 +1,11 @@
-# danielpqb-next-inputs
+# react-custom-form-components
 
 Next.js library to import custom Inputs.
 
-[Github repository](https://github.com/danielpqb/next-inputs#readme)
+[Github repository](https://github.com/danielpqb/react-custom-form-components#readme)
 
 ## How to use
 
 #### Install
 
-`npm i danielpqb-next-inputs`
+`npm i react-custom-form-components`
