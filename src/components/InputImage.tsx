@@ -2,18 +2,14 @@
 
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { InputText, TInputTextProps } from "./InputText";
+import { InputText } from "./InputText";
+import { TInputImageProps } from "@/types/Input";
 
-type TProps = {
-  label?: string;
-  className?: {
-    container?: string;
-    picture?: string;
-    label?: string;
-  };
-  inputTextProps?: TInputTextProps;
-};
-export function InputImage({ label, className, inputTextProps }: TProps) {
+export function InputImage({
+  label,
+  className,
+  inputTextProps,
+}: TInputImageProps) {
   const [url, setUrl] = useState("");
 
   return (

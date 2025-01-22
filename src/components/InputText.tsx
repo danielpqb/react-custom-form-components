@@ -9,47 +9,15 @@ import {
   phoneFormatter,
   rbnaCertificateNumberFormatter,
 } from "@/functions/stringFormatter";
-import { useEffect, useRef, useState } from "react";
-import { Control, useController, useForm } from "react-hook-form";
+import { useInputErrorMessages } from "@/hooks/useInputErrorMessages";
+import { useParentController } from "@/hooks/useParentController";
+import { useReactHookForm } from "@/hooks/useReactHookForm";
+import { TInputTextProps } from "@/types/Input";
+import { useEffect, useRef } from "react";
 import { twMerge } from "tailwind-merge";
 
-export type TInputTextProps = {
-  reactHookForm?: { name?: string; control?: Control<any, any> };
-  label?: string;
-  className?: {
-    container?: string;
-    textarea?: string;
-    label?: string;
-    errors?: { container?: string; span?: string };
-  };
-  defaultValue?: string;
-  placeholder?: string;
-  onChange?: (parsedValue: string, formattedValue: string) => void;
-  parse?: "only-numbers";
-  parser?: (formattedValue: string) => string;
-  format?:
-    | "currency-brl"
-    | "currency-usd"
-    | "cpf"
-    | "cnpj"
-    | "phone"
-    | "cep"
-    | "rbna-certificate-number"
-    | "danfe-accesskey";
-  formatter?: (parsedValue: string) => string;
-  minRows?: number;
-  multiline?: boolean;
-  errorMessage?: (
-    formattedValue: string,
-    parsedValue: string
-  ) => string | string[];
-  disabled?: boolean;
-  value?: string;
-  maxLenght?: number;
-};
-
 export function InputText({
-  reactHookForm,
+  reactHookForm: { name, control } = {},
   label,
   className,
   defaultValue,
@@ -66,33 +34,16 @@ export function InputText({
   value,
   maxLenght,
 }: TInputTextProps) {
-  // Controller do react-hook-form para receber o valor do input no onSubmit
-  // Cria um dummy control para não dar erro, caso o react-hook-form não seja utilizado
-  const { control: fakeUnusedControl } = useForm();
-  const { field } = useController({
-    name: reactHookForm?.name || "-",
-    control: reactHookForm?.control || fakeUnusedControl,
-  });
-
   // Referência do textarea
   const textAreaRef = useRef(null as HTMLTextAreaElement | null);
 
+  // Controller do react-hook-form para receber o valor do input no onSubmit
+  const { field } = useReactHookForm({ name, control });
+
   // Mensagens de erro retornadas pela função errorMessage
-  const [errorMessageArray, setErrorMessageArray] = useState(
-    null as null | string[]
-  );
-  function handleErrorMessages(fieldValue: string) {
-    const errorMessage =
-      errorFunc && errorFunc(fieldValue, parseText(fieldValue || ""));
-    if (!errorMessage) {
-      setErrorMessageArray(null);
-      return;
-    }
-    const errorsArray = Array.isArray(errorMessage)
-      ? errorMessage
-      : [errorMessage];
-    setErrorMessageArray(errorsArray);
-  }
+  const { handleErrorMessages, errorMessageArray } = useInputErrorMessages({
+    errorFunc: errorFunc,
+  });
 
   // Filtra caracteres indesejados
   function parseText(formattedValue: string) {
@@ -158,15 +109,8 @@ export function InputText({
     handleErrorMessages(formattedText || "");
   }
 
-  // Atualiza o valor do campo toda vez que o defaultValue (controlado pelo pai) muda
-  useEffect(() => {
-    typeof defaultValue === "string" && updateValue(defaultValue);
-  }, [defaultValue]);
-
-  // Atualiza o valor do campo toda vez que o value (controlado pelo pai) muda
-  useEffect(() => {
-    typeof value === "string" && updateValue(value);
-  }, [value]);
+  // Atualiza o valor do campo toda vez que o value ou defaultValue mudam
+  useParentController({ value, defaultValue, updateValue });
 
   // Redimensiona automaticamente o textarea quando o valor atualiza
   useEffect(() => {

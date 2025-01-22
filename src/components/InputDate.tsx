@@ -1,23 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Control, useController, useForm } from "react-hook-form";
+import { useInputErrorMessages } from "@/hooks/useInputErrorMessages";
+import { useParentController } from "@/hooks/useParentController";
+import { useReactHookForm } from "@/hooks/useReactHookForm";
+import { TInputDateProps } from "@/types/Input";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-type TProps = {
-  name?: string;
-  control?: Control<any, any>;
-  label?: string;
-  className?: { container?: string; input?: string; label?: string };
-  defaultValue?: string;
-  errorMessage?: (value: string) => string | string[];
-  onChange?: (value: string) => void;
-  disabled?: boolean;
-  value?: string;
-};
 export function InputDate({
-  name,
-  control,
+  reactHookForm: { name, control } = {},
   label,
   className,
   defaultValue = "",
@@ -25,56 +16,28 @@ export function InputDate({
   onChange,
   disabled,
   value,
-}: TProps) {
-  // Valor necessário para o input exibir o valor correto (yyyy-mm-dd)
+}: TInputDateProps) {
+  // Valor exibido no formato correto (yyyy-mm-dd)
   const [currentValue, setCurrentValue] = useState("");
 
   // Controller do react-hook-form para receber o valor do input no onSubmit
-  // Cria um dummy control para não dar erro, caso o react-hook-form não seja utilizado
-  const { control: fakeUnusedControl } = useForm();
-  const { field } = useController({
-    name: name || "-",
-    control: control || fakeUnusedControl,
-  });
+  const { field } = useReactHookForm({ name, control });
 
   // Mensagens de erro retornadas pela função errorMessage
-  const [errorMessageArray, setErrorMessageArray] = useState(
-    null as null | string[]
-  );
-  function handleErrorMessages(fieldValue: string) {
-    const errorMessage = errorFunc && errorFunc(fieldValue);
-    if (!errorMessage) {
-      setErrorMessageArray(null);
-      return;
-    }
-    const errorsArray = Array.isArray(errorMessage)
-      ? errorMessage
-      : [errorMessage];
-    setErrorMessageArray(errorsArray);
-  }
+  const { handleErrorMessages, errorMessageArray } = useInputErrorMessages({
+    errorFunc: errorFunc,
+  });
 
-  // Função que atualiza o valor recebido no formulário, atualiza o valor exibido ao usuário,
-  // e executa o evento onChange
+  // Atualiza todos os valores e dispara os eventos necessários
   function updateValue(value: string) {
     field.onChange(value);
-    onChange && onChange(value);
     setCurrentValue(value.split("T")[0]);
+    onChange && onChange(value);
     handleErrorMessages(value);
   }
 
-  // Atualiza o valor do campo toda vez que o defaultValue muda
-  useEffect(() => {
-    if (defaultValue) {
-      updateValue(defaultValue);
-    }
-  }, [defaultValue]);
-
-  // Atualiza o valor do campo toda vez que o value (controlado pelo pai) muda
-  useEffect(() => {
-    if (value) {
-      updateValue(value);
-    }
-  }, [value]);
+  // Atualiza o valor do campo toda vez que o value ou defaultValue mudam
+  useParentController({ value, defaultValue, updateValue });
 
   return (
     <div

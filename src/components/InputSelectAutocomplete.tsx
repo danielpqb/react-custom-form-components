@@ -1,26 +1,15 @@
 "use client";
 
 import { HiXMark } from "react-icons/hi2";
-import { useEffect, useState } from "react";
-import { Control, useController, useForm } from "react-hook-form";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { TInputSelectAutocompleteProps } from "@/types/Input";
+import { useReactHookForm } from "@/hooks/useReactHookForm";
+import { useInputErrorMessages } from "@/hooks/useInputErrorMessages";
+import { useParentController } from "@/hooks/useParentController";
 
-type TProps = {
-  reactHookForm?: { name?: string; control?: Control<any, any> };
-  label?: string;
-  className?: { label?: string; select?: string; container?: string };
-  defaultValue?: string;
-  placeholder?: string;
-  items: { value: string; label: string }[];
-  onSelect?: (value: string, label: string) => void;
-  onChange?: (value: string, label?: string) => void;
-  onClear?: () => void;
-  errorMessage?: (value: string) => string | string[];
-  value?: string;
-  disabled?: boolean;
-};
 export function InputSelectAutocomplete({
-  reactHookForm,
+  reactHookForm: { name, control } = {},
   label,
   className,
   defaultValue,
@@ -32,39 +21,7 @@ export function InputSelectAutocomplete({
   errorMessage: errorFunc,
   value,
   disabled,
-}: TProps) {
-  // Controller do react-hook-form para receber o valor do input no onSubmit
-  // Cria um dummy control para não dar erro, caso o react-hook-form não seja utilizado
-  const { control: fakeUnusedControl } = useForm();
-  const { field } = useController({
-    name: reactHookForm?.name || "-",
-    control: reactHookForm?.control || fakeUnusedControl,
-  });
-
-  // Função que atualiza o valor recebido no formulário, atualiza o valor exibido ao usuário,
-  // e executa o evento onChange
-  function updateValue(value: string) {
-    const itemLabel = items.find((item) => item.value === value)?.label || "";
-    setSearchTerm(itemLabel);
-    field.onChange(value);
-    onChange && onChange(value, itemLabel);
-    handleErrorMessages(value);
-  }
-
-  // Atualiza o valor do campo toda vez que o defaultValue muda
-  useEffect(() => {
-    if (defaultValue) {
-      updateValue(defaultValue);
-    }
-  }, [defaultValue]);
-
-  // Atualiza o valor do campo toda vez que o value (controlado pelo pai) muda
-  useEffect(() => {
-    if (value) {
-      updateValue(value);
-    }
-  }, [value]);
-
+}: TInputSelectAutocompleteProps) {
   // Armazena o texto digitado pelo usuário
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -74,6 +31,26 @@ export function InputSelectAutocomplete({
   // Identifica se o clique do usuário está sendo em um item da lista ou fora dela
   const [isClickingOnItem, setIsClickingOnItem] = useState(false);
 
+  // Controller do react-hook-form para receber o valor do input no onSubmit
+  const { field } = useReactHookForm({ name, control });
+
+  // Mensagens de erro retornadas pela função errorMessage
+  const { handleErrorMessages, errorMessageArray } = useInputErrorMessages({
+    errorFunc: errorFunc,
+  });
+
+  // Atualiza todos os valores e dispara os eventos necessários
+  function updateValue(value: string) {
+    const itemLabel = items.find((item) => item.value === value)?.label || "";
+    setSearchTerm(itemLabel);
+    field.onChange(value);
+    onChange && onChange(value, itemLabel);
+    handleErrorMessages(value);
+  }
+
+  // Atualiza o valor do campo toda vez que o value ou defaultValue mudam
+  useParentController({ value, defaultValue, updateValue });
+
   // Filtra os itens de acordo com o texto digitado pelo usuário
   // Se já houver um item selecionado, não filtra
   const filteredItems = field.value
@@ -81,22 +58,6 @@ export function InputSelectAutocomplete({
     : items.filter((item) => {
         return item.label.toLowerCase().includes(searchTerm.toLowerCase());
       });
-
-  // Mensagens de erro retornadas pela função errorMessage
-  const [errorMessageArray, setErrorMessageArray] = useState(
-    null as null | string[]
-  );
-  function handleErrorMessages(fieldValue: string) {
-    const errorMessage = errorFunc && errorFunc(fieldValue);
-    if (!errorMessage) {
-      setErrorMessageArray(null);
-      return;
-    }
-    const errorsArray = Array.isArray(errorMessage)
-      ? errorMessage
-      : [errorMessage];
-    setErrorMessageArray(errorsArray);
-  }
 
   return (
     <div
