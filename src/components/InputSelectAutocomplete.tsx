@@ -7,7 +7,8 @@ import { TInputSelectAutocompleteProps } from "@/types/Input";
 import { useReactHookForm } from "@/hooks/useReactHookForm";
 import { useInputErrorMessages } from "@/hooks/useInputErrorMessages";
 import { useParentController } from "@/hooks/useParentController";
-import { ErrorMessages } from "./ErrorMessages";
+import { ErrorMessages } from "./common/ErrorMessages";
+import { Label } from "./common/Label";
 
 export function InputSelectAutocomplete({
   reactHookForm: { name, control } = {},
@@ -65,20 +66,17 @@ export function InputSelectAutocomplete({
       className={twMerge(
         "w-full",
         className?.container,
-        disabled && "pointer-events-none opacity-80"
+        disabled && "input-disabled"
       )}
     >
-      {label && <label className={className?.label}>{label}</label>}
+      <Label className={className?.label}>{label}</Label>
 
       <div
         className={twMerge(
-          "flex flex-col shadow rounded-md bg-white/90 backdrop-blur-sm outline-none",
-          "ring-2 ring-inset ring-slate-500/60 overflow-hidden divide-y-2 divide-slate-500/10",
-          isSelectOpen && "ring-slate-500/80",
-          defaultValue !== field.value &&
-            (isSelectOpen ? "ring-amber-500/80" : "ring-amber-500/60"),
-          errorMessageArray &&
-            (isSelectOpen ? "ring-red-500/80" : "ring-red-500/60")
+          "input-base !p-0 flex flex-col overflow-hidden divide-y-2 divide-slate-500/10",
+          defaultValue !== field.value && "input-modified",
+          errorMessageArray && "input-error",
+          isSelectOpen && "!ring-opacity-80"
         )}
       >
         <div
@@ -90,7 +88,7 @@ export function InputSelectAutocomplete({
           <input
             placeholder={placeholder ?? "Digite para buscar"}
             value={searchTerm}
-            className="cursor-text bg-transparent text-sm rounded-t-lg block w-full p-2"
+            className="cursor-text bg-transparent rounded-t-lg block w-full p-2"
             onChange={(e) => {
               setSearchTerm(e.target.value);
               field.onChange("");

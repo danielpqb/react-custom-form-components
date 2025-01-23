@@ -6,7 +6,8 @@ import { useReactHookForm } from "@/hooks/useReactHookForm";
 import { TInputDateProps } from "@/types/Input";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { ErrorMessages } from "./ErrorMessages";
+import { ErrorMessages } from "./common/ErrorMessages";
+import { Label } from "./common/Label";
 
 export function InputDate({
   reactHookForm: { name, control } = {},
@@ -45,17 +46,16 @@ export function InputDate({
       className={twMerge(
         "flex flex-col",
         className?.container,
-        disabled && "pointer-events-none [&>*:not(:first-child)]:opacity-75"
+        disabled && "input-disabled"
       )}
     >
-      {label && <label className={className?.label}>{label}</label>}
+      <Label className={className?.label}>{label}</Label>
 
       <input
         className={twMerge(
-          "w-full shadow max-h-40 p-2 rounded-md bg-white/90 backdrop-blur-sm outline-none ring-2 ring-inset ring-slate-500/60 focus:ring-slate-500/80",
-          defaultValue.split("T")[0] !== currentValue &&
-            "ring-amber-500/60 focus:ring-amber-500/80",
-          errorMessageArray && "ring-red-500/60 focus:ring-red-500/80",
+          "input-base",
+          defaultValue.split("T")[0] !== currentValue && "input-modified",
+          errorMessageArray && "input-error",
           className?.input
         )}
         type="date"

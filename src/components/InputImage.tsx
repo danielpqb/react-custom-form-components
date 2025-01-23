@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { InputText } from "./InputText";
+import { InputText } from "./InputText/InputText";
 import { TInputImageProps } from "@/types/Input";
+import { Label } from "./common/Label";
 
 export function InputImage({
   label,
@@ -20,7 +21,8 @@ export function InputImage({
       )}
     >
       <div className="pb-1 w-full">
-        {label && <label className={className?.label}>{label}</label>}
+        <Label className={className?.label}>{label}</Label>
+
         <InputText
           {...inputTextProps}
           onChange={(value, formattedValue) => {
@@ -29,6 +31,7 @@ export function InputImage({
           }}
         />
       </div>
+
       <picture
         className={twMerge(
           "[&>*]:max-h-52 [&>*]:rounded-lg [&>*]:shadow flex justify-center items-center self-start",

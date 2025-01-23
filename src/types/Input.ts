@@ -79,7 +79,7 @@ export type TInputDateProps = TCommonProps & {
   onChange?: (value: string) => void;
 };
 
-export type TInputSelectProps = TCommonProps & {
+export type TInputSelectProps = Omit<TCommonProps, "placeholder"> & {
   className?: {
     label?: string;
     select?: string;

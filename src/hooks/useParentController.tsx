@@ -4,12 +4,12 @@ import { useEffect } from "react";
 
 export function useParentController({
   updateValue,
-  defaultValue,
-  value,
+  defaultValue = "",
+  value = "",
 }: {
-  updateValue: (value: any) => void;
-  defaultValue: any;
-  value: any;
+  updateValue: (formattedValue: string) => void;
+  defaultValue?: string;
+  value?: string;
 }) {
   // Atualiza o valor do campo toda vez que o defaultValue muda
   useEffect(() => {
