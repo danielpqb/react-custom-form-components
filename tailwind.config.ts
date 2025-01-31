@@ -15,7 +15,7 @@ const config: Config = {
       addComponents({
         ".input-base": {
           "--apply":
-            "'text-sm w-full shadow max-h-40 p-2 rounded-md bg-white/90 backdrop-blur-sm outline-none ring-2 ring-inset ring-slate-500 ring-opacity-60 focus:ring-opacity-80'",
+            "'text-sm w-full shadow p-2 rounded-md bg-white/90 backdrop-blur-sm outline-none ring-2 ring-inset ring-slate-500 ring-opacity-60 focus:ring-opacity-80'",
         },
         ".input-modified": {
           "--apply": "'ring-amber-500 ring-opacity-60'",

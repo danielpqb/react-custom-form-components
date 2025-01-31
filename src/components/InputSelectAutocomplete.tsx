@@ -13,13 +13,15 @@ import { Label } from "./common/Label";
 export function InputSelectAutocomplete({
   reactHookForm: { name, control } = {},
   label,
+  noDataFoundMessage,
   className,
   defaultValue,
-  placeholder,
+  placeholder = "Type to search...",
   items,
   onSelect,
   onChange,
   onClear,
+  transformItems,
   errorMessage: errorFunc,
   value,
   disabled,
@@ -74,21 +76,26 @@ export function InputSelectAutocomplete({
       <div
         className={twMerge(
           "input-base !p-0 flex flex-col overflow-hidden divide-y-2 divide-slate-500/10",
-          defaultValue !== field.value && "input-modified",
+          !!field.value && defaultValue !== field.value && "input-modified",
           errorMessageArray && "input-error",
-          isSelectOpen && "!ring-opacity-80"
+          isSelectOpen && "!ring-opacity-80",
+          className?.inputSelectContainer?.container
         )}
       >
         <div
           className={twMerge(
             "flex relative items-center",
-            isSelectOpen && "z-50"
+            isSelectOpen && "z-50",
+            className?.inputSelectContainer?.inputContainer
           )}
         >
           <input
-            placeholder={placeholder ?? "Digite para buscar"}
+            placeholder={placeholder}
             value={searchTerm}
-            className="cursor-text bg-transparent rounded-t-lg block w-full p-2"
+            className={twMerge(
+              "cursor-text bg-transparent rounded-t-lg block w-full p-2",
+              className?.inputSelectContainer?.input
+            )}
             onChange={(e) => {
               setSearchTerm(e.target.value);
               field.onChange("");
@@ -102,12 +109,18 @@ export function InputSelectAutocomplete({
             onBlur={() => {
               if (!isClickingOnItem) {
                 setIsSelectOpen(false);
+                if (!field.value) {
+                  setSearchTerm("");
+                }
               }
             }}
           />
           {field.value && (
             <HiXMark
-              className="absolute right-2 size-[1.2em] cursor-pointer hover:opacity-60 active:scale-90"
+              className={twMerge(
+                "absolute right-2 size-[1.2em] cursor-pointer hover:opacity-60 active:scale-90",
+                className?.inputSelectContainer?.xIcon
+              )}
               onClick={() => {
                 field.onChange("");
                 setSearchTerm("");
@@ -122,7 +135,8 @@ export function InputSelectAutocomplete({
         {isSelectOpen && (
           <ul
             className={twMerge(
-              "flex flex-col max-h-[30vh] overflow-y-auto text-sm z-50"
+              "flex flex-col max-h-[30vh] overflow-y-auto text-sm z-50",
+              className?.inputSelectContainer?.ul
             )}
           >
             {filteredItems.length > 0 ? (
@@ -130,7 +144,10 @@ export function InputSelectAutocomplete({
                 return (
                   <li
                     key={idx}
-                    className="hover:bg-slate-500/10 px-2 py-1 cursor-pointer"
+                    className={twMerge(
+                      "hover:bg-slate-500/10 px-2 py-1 cursor-pointer",
+                      className?.inputSelectContainer?.li?.common
+                    )}
                     onMouseDown={() => {
                       setIsClickingOnItem(true);
                     }}
@@ -147,12 +164,20 @@ export function InputSelectAutocomplete({
                       handleErrorMessages(item.value);
                     }}
                   >
-                    {item.label}
+                    {transformItems?.[item.value] || item.label}
                   </li>
                 );
               })
             ) : (
-              <li className="px-2 py-1 opacity-70">Nenhum valor encontrado</li>
+              <li
+                className={twMerge(
+                  "px-2 py-1 opacity-70",
+                  className?.inputSelectContainer?.li?.common,
+                  className?.inputSelectContainer?.li?.noDataFound
+                )}
+              >
+                {noDataFoundMessage || "No data found"}
+              </li>
             )}
           </ul>
         )}

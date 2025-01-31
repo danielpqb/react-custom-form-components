@@ -54,7 +54,9 @@ export function InputDate({
       <input
         className={twMerge(
           "input-base",
-          defaultValue.split("T")[0] !== currentValue && "input-modified",
+          !!currentValue &&
+            defaultValue.split("T")[0] !== currentValue &&
+            "input-modified",
           errorMessageArray && "input-error",
           className?.input
         )}

@@ -21,7 +21,7 @@ export function InputText({
   parser,
   formatter,
   format,
-  placeholder,
+  placeholder = "Type here...",
   minRows,
   multiline,
   errorMessage: errorFunc,
@@ -81,10 +81,10 @@ export function InputText({
         ref={textAreaRef}
         style={{ resize: "none" }}
         rows={minRows || 1}
-        placeholder={placeholder || "Digite aqui..."}
+        placeholder={placeholder}
         className={twMerge(
-          "input-base",
-          defaultValue !== field.value && "input-modified",
+          "input-base max-h-40",
+          !!field.value && defaultValue !== field.value && "input-modified",
           errorMessageArray && "input-error",
           className?.textarea
         )}

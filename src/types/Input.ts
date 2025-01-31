@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Control } from "react-hook-form";
 
 export type TCommonProps = {
@@ -42,11 +43,19 @@ export type TInputTextProps = TCommonProps & {
 export type TInputSelectAutocompleteProps = {
   reactHookForm?: { name?: string; control?: Control<any, any> };
   label?: string;
+  noDataFoundMessage?: string;
   className?: {
-    label?: string;
-    select?: string;
     container?: string;
+    label?: string;
     errors?: { container?: string; span?: string };
+    inputSelectContainer?: {
+      container?: string;
+      inputContainer?: string;
+      input?: string;
+      xIcon?: string;
+      ul?: string;
+      li?: { common?: string; noDataFound?: string };
+    };
   };
   defaultValue?: string;
   placeholder?: string;
@@ -54,6 +63,7 @@ export type TInputSelectAutocompleteProps = {
   onSelect?: (value: string, label: string) => void;
   onChange?: (value: string, label?: string) => void;
   onClear?: () => void;
+  transformItems?: { [itemValue: string]: string | ReactNode };
   errorMessage?: (value: string) => string | string[];
   value?: string;
   disabled?: boolean;

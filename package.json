@@ -1,12 +1,13 @@
 {
   "name": "react-custom-form-components",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "yalc:push": "npm run build && yalc push"
   },
   "keywords": [
     "react",

@@ -67,7 +67,7 @@ export function InputSelect({
           name={name}
           className={twMerge(
             "input-base",
-            defaultValue !== field.value && "input-modified",
+            !!field.value && defaultValue !== field.value && "input-modified",
             errorMessageArray && "input-error",
             className?.select
           )}
